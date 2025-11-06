@@ -152,16 +152,21 @@ with col1:
     if ok:
         # Create a figure using matplotlib
         fig, ax = plt.subplots(figsize=(7, 5))
+
+        # Use loglog so both axes are logarithmic AND auto-scaled to your data
         ax.loglog(AB2, rho_app, "o-", label="ρₐ (predicted)")
-        ax.set_yscale("log")
-        ax.set_xscale("log")
-        ax.grid(True, which="both", ls=":")
+
+        # Optional: ensure minor ticks show small divisions between log decades
+        ax.minorticks_on()
+
+        # Grid on both major and minor ticks for clarity
+        ax.grid(True, which="both", ls=":", alpha=0.7)
+
         ax.set_xlabel("AB/2 (m)")
         ax.set_ylabel("Apparent resistivity (Ω·m)")
         ax.set_title("Schlumberger VES (forward)")
         ax.legend()
 
-        # Show it inside Streamlit
         st.pyplot(fig, clear_figure=True)
 
         # Export results as CSV for external plotting (Excel, Python, etc.)
