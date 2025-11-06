@@ -157,7 +157,7 @@ with col1:
         ax.plot(AB2, rho_app, "o-", label="ρₐ (predicted)")
 
         # Make both axes logarithmic (base 10)
-       ax.set_xscale("log", base=10) 
+       ax.set_xscale("log", base=10)
        ax.set_yscale("log", base=10)
 
        # --- Make the log scaling obvious ---
