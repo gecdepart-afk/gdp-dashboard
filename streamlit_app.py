@@ -147,19 +147,31 @@ except Exception as e:
 col1, col2 = st.columns([2, 1])  # layout: wide chart + narrow model panel
 
 # --- LEFT: Apparent resistivity curve ---
+from matplotlib.ticker import LogLocator, LogFormatter
+
 with col1:
     st.subheader("Sounding curve (log–log)")
     if ok:
-        # Create a figure using matplotlib
         fig, ax = plt.subplots(figsize=(7, 5))
 
-        # Use loglog so both axes are logarithmic AND auto-scaled to your data
+        # Log–log curve
         ax.loglog(AB2, rho_app, "o-", label="ρₐ (predicted)")
 
-        # Optional: ensure minor ticks show small divisions between log decades
-        ax.minorticks_on()
+        # ---- Make the log nature obvious on Y ----
+        # Compute decade bounds that bracket your data
+        y_min = rho_app.min()
+        y_max = rho_app.max()
+        y_lo  = 10 ** np.floor(np.log10(y_min))
+        y_hi  = 10 ** np.ceil(np.log10(y_max))
+        ax.set_ylim(y_lo, y_hi)  # expand to full decades automatically
 
-        # Grid on both major and minor ticks for clarity
+        # Force decade ticks + minor ticks on the log axis
+        ax.yaxis.set_major_locator(LogLocator(base=10.0))
+        ax.yaxis.set_minor_locator(LogLocator(base=10.0, subs=np.arange(2, 10) * 0.1))
+        ax.yaxis.set_major_formatter(LogFormatter(base=10.0, labelOnlyBase=False))
+
+        # (x already log from ax.loglog, but you can also control its ticks similarly if you want)
+        ax.minorticks_on()
         ax.grid(True, which="both", ls=":", alpha=0.7)
 
         ax.set_xlabel("AB/2 (m)")
@@ -168,6 +180,7 @@ with col1:
         ax.legend()
 
         st.pyplot(fig, clear_figure=True)
+
 
         # Export results as CSV for external plotting (Excel, Python, etc.)
         df_out = pd.DataFrame({
